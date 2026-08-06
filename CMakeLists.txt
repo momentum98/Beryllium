@@ -12,6 +12,8 @@ set(SOURCE_FILES
 
     src/core/memory/memory.c
 
+    src/managers/input/input_manager.c
+
     src/timer/timer.c
 
     src/logger/logger.c

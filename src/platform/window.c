@@ -34,7 +34,7 @@ u32 P_SetupWindow(Window* const window, const char* title, const i32 width, cons
     return 0;
 }
 
-void P_UpdateWindow(Window* const window)
+void P_UpdateWindow(Window* const window, InputManager* const inputManager)
 {
     SDL_Event event;
 
@@ -60,6 +60,17 @@ void P_UpdateWindow(Window* const window)
             window->screenBuffer.size = window->screenBuffer.width * window->screenBuffer.height;
 
             window->screenBuffer.buffer = M_MemAlloc(window->screenBuffer.size);
+        }
+
+        if (event.type == SDL_EVENT_KEY_DOWN)
+        {
+            if (!event.key.repeat)
+                IM_UpdateActionStates(inputManager, event.key.key, true);
+        }
+
+        if (event.type == SDL_EVENT_KEY_UP)
+        {
+            IM_UpdateActionStates(inputManager, event.key.key, false);
         }
     }
 }

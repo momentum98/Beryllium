@@ -3,11 +3,6 @@
 #include <windows.h>
 #include <winnt.h>
 
-void* M_BufferOffset(u8* const buffer, const u32 offset)
-{
-    return (void*) (buffer + offset);
-}
-
 void* M_MemAlloc(const u32 size)
 {
     return VirtualAlloc(NULL, size, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
