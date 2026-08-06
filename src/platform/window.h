@@ -8,13 +8,25 @@
 
 typedef struct
 {
-    bool        isRunning;
+    u8*         buffer;
 
-    HWND        hWnd;
-    SDL_Window* sdlWindow;
+    u32         size;
 
     i32         width;
     i32         height;
+} ScreenBuffer;
+
+typedef struct
+{
+    bool         isRunning;
+
+    HWND         hWnd;
+    SDL_Window*  sdlWindow;
+
+    i32          width;
+    i32          height;
+
+    ScreenBuffer screenBuffer;
 } Window;
 
 u32 P_SetupWindow(Window* const window, const char* title, const i32 width, const i32 height);
