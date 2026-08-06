@@ -1,8 +1,0 @@
-[
-{
-  "directory": "C:/Users/barne/Documents/Projects/Beryllium/build",
-  "command": "\"C:\\Program Files\\LLVM\\bin\\clang.exe\"  @CMakeFiles\\Beryllium.dir\\includes_C.rsp -O0 -g -Xclang -gcodeview -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -o CMakeFiles\\Beryllium.dir\\src\\main.c.obj -c C:\\Users\\barne\\Documents\\Projects\\Beryllium\\src\\main.c",
-  "file": "C:/Users/barne/Documents/Projects/Beryllium/src/main.c",
-  "output": "CMakeFiles/Beryllium.dir/src/main.c.obj"
-}
-]
