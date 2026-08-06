@@ -9,6 +9,12 @@ set(SOURCE_FILES
     src/game/game.c
 
     src/platform/window.c
+
+    src/core/memory/memory.c
+
+    src/timer/timer.c
+
+    src/logger/logger.c
 )
 
 add_executable(Beryllium ${SOURCE_FILES})
