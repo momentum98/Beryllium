@@ -7,12 +7,12 @@
 
 typedef struct
 {
-    LARGE_INTEGER frequency;
-    LARGE_INTEGER lastCounter;
+    u64 frequency;
+    u64 lastCounter;
 
-    f32           currTime;
+    f32 currTime;
 
-    f32           deltaTime;
+    f32 deltaTime;
 } Timer;
 
 void T_UpdateTimer(Timer* const timer);

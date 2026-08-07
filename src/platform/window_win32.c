@@ -2,7 +2,9 @@
 
 #include <core/memory/memory.h>
 #include <SDL_properties.h>
+#include <logger/logger.h>
 #include <SDL_events.h>
+#include <windows.h>
 #include <math.h>
 
 #define DEFAULT_SCREEN_BUFFER_WIDTH  320
@@ -22,20 +24,33 @@ u32 P_SetupWindow(Window* const window, const char* title, const i32 width, cons
     );
 
     if (hWnd == NULL)
-    {
-        SDL_DestroyWindow(sdlWindow);
         return 1;
-    }
+
+    P_SetupScreenBuffer(window, width, height);
+
+    if (window->screenBuffer.buffer == NULL)
+        return 1;
 
     window->isRunning = true;
     window->sdlWindow = sdlWindow;
-    window->hWnd = hWnd;
+    window->handle = (void*) hWnd;
 
     return 0;
 }
 
-void P_UpdateWindow(Window* const window, InputManager* const inputManager)
+void P_SetupScreenBuffer(Window* const window, const i32 width, const i32 height)
 {
+    window->screenBuffer.width = min(width, DEFAULT_SCREEN_BUFFER_WIDTH);
+    window->screenBuffer.height = min(height, DEFAULT_SCREEN_BUFFER_HEIGHT);
+
+    window->screenBuffer.size = window->screenBuffer.width * window->screenBuffer.height;
+
+    window->screenBuffer.buffer = M_MemAlloc(window->screenBuffer.size);
+}
+
+u32 P_UpdateWindow(Window* const window, InputManager* const inputManager)
+{
+    i32 res = 0;
     SDL_Event event;
 
     while (SDL_PollEvent(&event))
@@ -54,12 +69,10 @@ void P_UpdateWindow(Window* const window, InputManager* const inputManager)
             window->width = event.window.data1;
             window->height = event.window.data2;
 
-            window->screenBuffer.width = min(window->width, DEFAULT_SCREEN_BUFFER_WIDTH);
-            window->screenBuffer.height = min(window->height, DEFAULT_SCREEN_BUFFER_HEIGHT);
+            P_SetupScreenBuffer(window, window->width, window->height);
 
-            window->screenBuffer.size = window->screenBuffer.width * window->screenBuffer.height;
-
-            window->screenBuffer.buffer = M_MemAlloc(window->screenBuffer.size);
+            if (window->screenBuffer.buffer == NULL)
+                res = 1;
         }
 
         if (event.type == SDL_EVENT_KEY_DOWN)
@@ -73,9 +86,20 @@ void P_UpdateWindow(Window* const window, InputManager* const inputManager)
             IM_UpdateActionStates(inputManager, event.key.key, false);
         }
     }
+
+    return res;
 }
 
 void P_ShutdownWindow(Window* const window)
 {
+    if (window->sdlWindow != NULL)
+        SDL_DestroyWindow(window->sdlWindow);
+
+    if (window->screenBuffer.buffer != NULL)
+    {
+        M_MemFree(window->screenBuffer.buffer);
+        window->screenBuffer.buffer = NULL;
+    }
+
     SDL_DestroyWindow(window->sdlWindow);
 }

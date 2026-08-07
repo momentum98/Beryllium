@@ -3,7 +3,6 @@
 
 #include <managers/input/input_manager.h>
 #include <SDL_video.h>
-#include <windows.h>
 #include <types.h>
 #include <SDL.h>
 
@@ -21,7 +20,8 @@ typedef struct
 {
     bool         isRunning;
 
-    HWND         hWnd;
+    void*        handle;
+
     SDL_Window*  sdlWindow;
 
     i32          width;
@@ -30,9 +30,9 @@ typedef struct
     ScreenBuffer screenBuffer;
 } Window;
 
-
 u32 P_SetupWindow(Window* const window, const char* title, const i32 width, const i32 height);
-void P_UpdateWindow(Window* const window, InputManager* const inputManager);
+void P_SetupScreenBuffer(Window* const window, const i32 width, const i32 height);
+u32 P_UpdateWindow(Window* const window, InputManager* const inputManager);
 void P_ShutdownWindow(Window* const window);
 
 #endif

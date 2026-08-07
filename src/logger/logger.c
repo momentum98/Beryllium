@@ -27,8 +27,8 @@ void L_VLog(LogType type, const char* const message, va_list vaList)
     
     char buffer[256];
 
-    snprintf(buffer, sizeof(buffer), "[%s] %s\n", prefix, message);
-    vprintf(buffer, vaList);
+    vsnprintf(buffer, sizeof(buffer), message, vaList);
+    printf("[%s] %s\n", prefix, buffer);
 }
 
 void L_Log(LogType type, const char* const message, ...)

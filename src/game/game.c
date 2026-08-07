@@ -1,5 +1,6 @@
 #include "game.h"
 
+#include <managers/input/input_manager.h>
 #include <core/memory/memory.h>
 #include <platform/window.h>
 #include <logger/logger.h>
@@ -23,18 +24,22 @@ void EndGame(Game game)
 
     SDL_Quit();
 
-    M_MemFree(game.window->screenBuffer.buffer);
-    game.window->screenBuffer.buffer = NULL;
+    if (game.window != NULL)
+        P_ShutdownWindow(game.window);
 
-    M_MemFree(game.inputManager->keybinds);
-    game.inputManager->keybindCount = 0;
-    game.inputManager->keybinds = NULL;
+    if (game.inputManager != NULL)
+        IM_ShutdownInputManager(game.inputManager);
 }
 
 void G_StartGame()
 {
     L_LogInfo("Engine started...");
-    SDL_Init(SDL_INIT_VIDEO);
+    
+    if (!SDL_Init(SDL_INIT_VIDEO))
+    {
+        L_LogError("SDL_Init failed: %s", SDL_GetError());
+        return;
+    }
     
     u32 res = 0;
 
@@ -44,22 +49,43 @@ void G_StartGame()
     Window window = { 0 };
     res = P_SetupWindow(&window, DEFAULT_WINDOW_TITLE, DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
 
+    if (res > 0)
+    {
+        L_LogError("Failed to setup Window...");
+        
+        EndGame(
+            (Game) { &window, &timer, NULL }
+        );
+        return;
+    }
+
     InputManager inputManager = { 0 };
-    IM_SetupInputManager(&inputManager);
+    res = IM_SetupInputManager(&inputManager);
 
     if (res > 0)
     {
-        L_LogError("Failed to setup window...");
+        L_LogError("Failed to setup Input Manager...");
         
         EndGame(
             (Game) { &window, &timer, &inputManager }
         );
+        return;
     }
 
     while (window.isRunning)
     {
         T_UpdateTimer(&timer);
-        P_UpdateWindow(&window, &inputManager);
+        res = P_UpdateWindow(&window, &inputManager);
+
+        if (res > 0)
+        {
+            L_LogError("Failed to update Window...");
+        
+            EndGame(
+                (Game) { &window, &timer, &inputManager }
+            );
+            return;
+        }
         
         Tick(
             (Game) { &window, &timer, &inputManager }

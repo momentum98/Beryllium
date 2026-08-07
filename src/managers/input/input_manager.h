@@ -33,6 +33,7 @@ typedef struct
 } InputManager;
 
 void IM_UpdateActionStates(InputManager* const inputManager, const int key, const bool down);
-void IM_SetupInputManager(InputManager* const inputManager);
+void IM_ShutdownInputManager(InputManager* const inputManager);
+u32 IM_SetupInputManager(InputManager* const inputManager);
 
 #endif
