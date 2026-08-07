@@ -51,7 +51,10 @@ target_include_directories(Beryllium
         ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
-target_link_libraries(Beryllium PRIVATE SDL3::SDL3)
+target_link_libraries(Beryllium 
+    PRIVATE 
+        SDL3::SDL3
+)
 
 if (WIN32)
     target_link_libraries(Beryllium 

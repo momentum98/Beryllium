@@ -14,8 +14,12 @@ u32 P_SetupWindow(Window* const window, const char* title, const i32 width, cons
 {
     SDL_Window* const sdlWindow = SDL_CreateWindow(title, width, height, SDL_WINDOW_RESIZABLE);
 
+    window->isRunning = true;
+    
     if (sdlWindow == NULL)
         return 1;
+
+    window->sdlWindow = sdlWindow;
 
     const HWND hWnd = SDL_GetPointerProperty(
         SDL_GetWindowProperties(sdlWindow), 
@@ -26,14 +30,11 @@ u32 P_SetupWindow(Window* const window, const char* title, const i32 width, cons
     if (hWnd == NULL)
         return 1;
 
+    window->handle = (void*) hWnd;
     P_SetupScreenBuffer(window, width, height);
 
     if (window->screenBuffer.buffer == NULL)
         return 1;
-
-    window->isRunning = true;
-    window->sdlWindow = sdlWindow;
-    window->handle = (void*) hWnd;
 
     return 0;
 }
@@ -100,6 +101,4 @@ void P_ShutdownWindow(Window* const window)
         M_MemFree(window->screenBuffer.buffer);
         window->screenBuffer.buffer = NULL;
     }
-
-    SDL_DestroyWindow(window->sdlWindow);
 }
