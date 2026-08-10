@@ -3,6 +3,7 @@
 #include <managers/input/input_manager.h>
 #include <core/memory/memory.h>
 #include <platform/window.h>
+#include <backend/backend.h>
 #include <logger/logger.h>
 #include <timer/timer.h>
 #include <SDL.h>
@@ -29,6 +30,9 @@ void EndGame(Game game)
 
     if (game.inputManager != NULL)
         IM_ShutdownInputManager(game.inputManager);
+
+    if (game.backend != NULL)
+        B_BackendShutdown(game.backend);
 }
 
 void G_StartGame()
@@ -72,6 +76,13 @@ void G_StartGame()
         return;
     }
 
+    Backend backend = { 0 };
+    backend.type = DX12_BACKEND;
+
+    B_BackendSetup(&backend, window.screenBuffer.width, window.screenBuffer.height, &window);
+
+    window.backend = &backend;
+    
     while (window.isRunning)
     {
         T_UpdateTimer(&timer);
@@ -86,13 +97,17 @@ void G_StartGame()
             );
             return;
         }
+
+        B_BackendNewFrame(&backend, (f32[]) { 0, 0, 0, 255 });
         
         Tick(
-            (Game) { &window, &timer, &inputManager }
+            (Game) { &window, &timer, &inputManager, &backend }
         );
+
+        B_BackendEndFrame(&backend);
     }
 
     EndGame(
-        (Game) { &window, &timer, &inputManager }
+        (Game) { &window, &timer, &inputManager, &backend }
     );
 }

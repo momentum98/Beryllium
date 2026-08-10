@@ -39,6 +39,9 @@ set(SOURCE_FILES
     src/timer/timer_win32.c
 
     src/logger/logger.c
+
+    src/backend/backend_dx12.c
+    src/backend/dx12/dx12.c
 )
 
 add_executable(Beryllium ${SOURCE_FILES})
@@ -60,5 +63,9 @@ if (WIN32)
     target_link_libraries(Beryllium 
         PRIVATE
             user32 gdi32 winmm imm32 ole32 oleaut32 version uuid advapi32 setupapi shell32
+            d3d12
+            dxgi
+            dxguid
+            d3dcompiler
     )
 endif()

@@ -1,6 +1,7 @@
 #include "window.h"
 
 #include <core/memory/memory.h>
+#include <backend/backend.h>
 #include <SDL_properties.h>
 #include <logger/logger.h>
 #include <SDL_events.h>
@@ -71,6 +72,7 @@ u32 P_UpdateWindow(Window* const window, InputManager* const inputManager)
             window->height = event.window.data2;
 
             P_SetupScreenBuffer(window, window->width, window->height);
+            B_BackendResizeScreenBuffers((Backend*) window->backend, window->width, window->height);
 
             if (window->screenBuffer.buffer == NULL)
                 res = 1;
